@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Studio Standalone</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col p-6">
+
+    <div class="flex-grow flex items-center justify-center">
+        <div class="max-w-md w-full bg-white rounded-3xl shadow-xl border border-gray-100 p-8 space-y-6">
+            <div class="text-center space-y-2">
+                <h1 class="text-2xl font-bold tracking-tight">QR Generator</h1>
+                <p class="text-sm text-gray-500">Enter text or a URL to generate a QR code.</p>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Input Data</label>
+                    <input type="text" id="text-input" placeholder="https://example.com" 
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-black focus:ring-1 focus:ring-black outline-none transition-all">
+                </div>
+
+                <button onclick="generateQR()" 
+                    class="w-full bg-black text-white font-semibold py-3 rounded-xl hover:bg-gray-800 active:scale-[0.98] transition-all">
+                    Generate QR Code
+                </button>
+            </div>
+
+            <div id="qrcode-container" class="flex flex-col items-center justify-center space-y-4 pt-4">
+                <div id="qrcode" class="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm"></div>
+                
+                <button id="download-btn" onclick="downloadQR()" style="display: none;"
+                    class="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-black transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download PNG
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Updated Footer -->
+    <footer class="mt-8 text-center py-6 border-t border-gray-200">
+        <p class="text-xs text-gray-400 font-medium tracking-tight">
+            This Site is Developed by Abid Shanto
+        </p>
+    </footer>
+
+    <script>
+        let qrcode = new QRCode(document.getElementById("qrcode"), {
+            width: 256,
+            height: 256,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+
+        // Initial generation
+        qrcode.makeCode("https://ai.studio");
+        document.getElementById("download-btn").style.display = "flex";
+
+        function generateQR() {
+            const text = document.getElementById("text-input").value;
+            if (text.trim() === "") {
+                alert("Please enter some text or a URL");
+                return;
+            }
+            qrcode.makeCode(text);
+            document.getElementById("download-btn").style.display = "flex";
+        }
+
+        function downloadQR() {
+            const img = document.querySelector("#qrcode img");
+            if (img) {
+                const link = document.createElement("a");
+                link.href = img.src;
+                link.download = "qr-code.png";
+                link.click();
+            } else {
+                const canvas = document.querySelector("#qrcode canvas");
+                const link = document.createElement("a");
+                link.href = canvas.toDataURL("image/png");
+                link.download = "qr-code.png";
+                link.click();
+            }
+        }
+    </script>
+</body>
+</html>
